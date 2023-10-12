@@ -1,5 +1,7 @@
 # Recoil and Redux comparison
 
+I compare redux and recoil for selective rendering of components within a list. Redux needs to re-compare all elements in the list in order to determine which ones to rerender, whereas Recoil does not.
+
 ## To run
 
 [Install bun][1]

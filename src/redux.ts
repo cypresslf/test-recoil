@@ -2,25 +2,18 @@ import { PayloadAction, configureStore, createSlice } from "@reduxjs/toolkit";
 export const NEVER_CHANGES = { value: "never changes" };
 
 export type State = {
-  list: Record<number, { id: number; value: number }>;
+  list: Record<string, { value: number }>;
+  listIds: string[];
   mousePosition: { x: number; y: number };
   neverChanges: { value: string };
 };
 
 const initialState: State = {
+  listIds: ["1", "2", "3"],
   list: {
-    1: {
-      id: 1,
-      value: 0,
-    },
-    2: {
-      id: 2,
-      value: 0,
-    },
-    3: {
-      id: 3,
-      value: 0,
-    },
+    1: { value: 0 },
+    2: { value: 0 },
+    3: { value: 0 },
   },
   mousePosition: { x: 0, y: 0 },
   neverChanges: NEVER_CHANGES,

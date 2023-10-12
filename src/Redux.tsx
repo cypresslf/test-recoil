@@ -31,7 +31,7 @@ function Redux() {
 }
 
 function SlowList() {
-  const list = useSelector((state: State) => state.list);
+  const listIds = useSelector((state: State) => state.listIds);
 
   const start = Date.now();
   while (Date.now() - start < 1000) {
@@ -42,13 +42,20 @@ function SlowList() {
     <>
       <p>Slow list with one fast-changing item</p>
       <ul>
-        {Object.values(list).map((item) => (
-          <li key={item.id}>
-            id: {item.id} value: {item.value}
-          </li>
+        {listIds.map((id) => (
+          <FastListItem key={id} id={id} />
         ))}
       </ul>
     </>
+  );
+}
+
+function FastListItem({ id }: { id: string }) {
+  const item = useSelector((state: State) => state.list[id]);
+  return (
+    <li>
+      id: {id} value: {item.value}
+    </li>
   );
 }
 

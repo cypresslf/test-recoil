@@ -60,7 +60,7 @@ function SlowList() {
       <p>Slow list with one fast-changing item</p>
       <ul>
         {listIds.map((id) => (
-          <FastListItem id={id} />
+          <FastListItem id={id} key={id} />
         ))}
       </ul>
     </>
@@ -70,7 +70,11 @@ function SlowList() {
 function FastListItem({ id }: { id: number }) {
   const item = useRecoilValue(listStateFamily(id));
 
-  return item ? <li key={item.value}>{item.value}</li> : undefined;
+  return item ? (
+    <li key={item.value}>
+      id: {id}, value: {item.value}
+    </li>
+  ) : undefined;
 }
 
 function FastChild() {

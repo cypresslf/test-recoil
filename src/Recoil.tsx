@@ -21,7 +21,7 @@ const listState = atom({
 
 const listStateFamily = atomFamily({
   key: "list",
-  default: { value: Math.random() },
+  default: () => ({ value: Math.random() }),
 });
 
 function Recoil() {
@@ -38,6 +38,13 @@ function Recoil() {
     window.addEventListener("mousemove", handler);
     return () => window.removeEventListener("mousemove", handler);
   }, [setMousePosition, setNeverChanges, setListItem]);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setListItem((item) => ({ value: item.value + Math.random() - 0.5 }));
+    }, 30);
+    return () => clearInterval(id);
+  }, [setListItem]);
 
   return (
     <>
@@ -73,7 +80,7 @@ function FastListItem({ id }: { id: string }) {
 
   return item ? (
     <li key={item.value}>
-      id: {id}, value: {item.value}
+      id: {id}, value: {item.value.toFixed(5)}
     </li>
   ) : undefined;
 }

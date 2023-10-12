@@ -4,6 +4,7 @@ import {
   AppDispatch,
   NEVER_CHANGES,
   State,
+  addListValue,
   setListValue,
   setMousePosition,
   setNeverChanges,
@@ -15,12 +16,20 @@ function Redux() {
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       dispatch(setMousePosition({ x: e.clientX, y: e.clientY }));
-      dispatch(setListValue({ id: 1, value: e.clientX + e.clientY }));
+      dispatch(setListValue({ id: "1", value: e.clientX + e.clientY }));
       dispatch(setNeverChanges(NEVER_CHANGES));
     };
     window.addEventListener("mousemove", handler);
     return () => window.removeEventListener("mousemove", handler);
   }, [dispatch]);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      dispatch(addListValue({ id: "1", value: Math.random() - 0.5 }));
+    }, 30);
+    return () => clearInterval(id);
+  }, [dispatch]);
+
   return (
     <>
       <SlowList />
@@ -54,7 +63,7 @@ function FastListItem({ id }: { id: string }) {
   const item = useSelector((state: State) => state.list[id]);
   return (
     <li>
-      id: {id} value: {item.value}
+      id: {id} value: {item.value.toFixed(5)}
     </li>
   );
 }

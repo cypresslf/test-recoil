@@ -31,15 +31,22 @@ const slice = createSlice({
     },
     setListValue: (
       state,
-      action: PayloadAction<{ id: number; value: number }>
+      action: PayloadAction<{ id: string; value: number }>
     ) => {
       const item = state.list[action.payload.id];
       if (item) item.value = action.payload.value;
     },
+    addListValue: (
+      state,
+      action: PayloadAction<{ id: string; value: number }>
+    ) => {
+      const item = state.list[action.payload.id];
+      if (item) item.value += action.payload.value;
+    },
   },
 });
 
-export const { setMousePosition, setNeverChanges, setListValue } =
+export const { setMousePosition, setNeverChanges, setListValue, addListValue } =
   slice.actions;
 export const store = configureStore({ reducer: slice.reducer });
 export type AppDispatch = typeof store.dispatch;

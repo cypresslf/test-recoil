@@ -11,7 +11,7 @@ export type State = {
 
 const initialState: State = {
   listIds: LIST_IDS,
-  list: LIST_IDS.map((id) => ({ [id]: { value: 0 } })).reduce(
+  list: LIST_IDS.map((id) => ({ [id]: { value: Math.random() } })).reduce(
     (a, b) => ({ ...a, ...b }),
     {}
   ),

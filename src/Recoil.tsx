@@ -21,7 +21,7 @@ const listState = atom({
 
 const listStateFamily = atomFamily({
   key: "list",
-  default: { value: 0 },
+  default: { value: Math.random() },
 });
 
 function Recoil() {

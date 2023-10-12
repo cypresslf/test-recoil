@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { atom, atomFamily, useRecoilValue, useSetRecoilState } from "recoil";
+import { LIST_IDS } from "./constants";
 
 const NEVER_CHANGES = { value: "never changes" };
 
@@ -15,7 +16,7 @@ const neverChangesState = atom({
 
 const listState = atom({
   key: "listIds",
-  default: [1, 2, 3],
+  default: LIST_IDS,
 });
 
 const listStateFamily = atomFamily({
@@ -26,7 +27,7 @@ const listStateFamily = atomFamily({
 function Recoil() {
   const setMousePosition = useSetRecoilState(mousePositionState);
   const setNeverChanges = useSetRecoilState(neverChangesState);
-  const setListItem = useSetRecoilState(listStateFamily(1));
+  const setListItem = useSetRecoilState(listStateFamily("1"));
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -67,7 +68,7 @@ function SlowList() {
   );
 }
 
-function FastListItem({ id }: { id: number }) {
+function FastListItem({ id }: { id: string }) {
   const item = useRecoilValue(listStateFamily(id));
 
   return item ? (

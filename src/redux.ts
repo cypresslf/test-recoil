@@ -1,4 +1,5 @@
 import { PayloadAction, configureStore, createSlice } from "@reduxjs/toolkit";
+import { LIST_IDS } from "./constants";
 export const NEVER_CHANGES = { value: "never changes" };
 
 export type State = {
@@ -9,12 +10,11 @@ export type State = {
 };
 
 const initialState: State = {
-  listIds: ["1", "2", "3"],
-  list: {
-    1: { value: 0 },
-    2: { value: 0 },
-    3: { value: 0 },
-  },
+  listIds: LIST_IDS,
+  list: LIST_IDS.map((id) => ({ [id]: { value: 0 } })).reduce(
+    (a, b) => ({ ...a, ...b }),
+    {}
+  ),
   mousePosition: { x: 0, y: 0 },
   neverChanges: NEVER_CHANGES,
 };

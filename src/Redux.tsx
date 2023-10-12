@@ -4,6 +4,7 @@ import {
   AppDispatch,
   NEVER_CHANGES,
   State,
+  setListValue,
   setMousePosition,
   setNeverChanges,
 } from "./redux";
@@ -14,16 +15,39 @@ function Redux() {
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       dispatch(setMousePosition({ x: e.clientX, y: e.clientY }));
+      dispatch(setListValue({ id: 1, value: e.clientX + e.clientY }));
       dispatch(setNeverChanges(NEVER_CHANGES));
     };
     window.addEventListener("mousemove", handler);
     return () => window.removeEventListener("mousemove", handler);
   }, [dispatch]);
+  return (
+    <>
+      <SlowList />
+      <FastChild />
+      <SlowChild />
+    </>
+  );
+}
+
+function SlowList() {
+  const list = useSelector((state: State) => state.list);
+
+  const start = Date.now();
+  while (Date.now() - start < 1000) {
+    // artificial delay: simulate a slow render
+  }
 
   return (
     <>
-      <FastChild />
-      <SlowChild />
+      <p>List items</p>
+      <ul>
+        {Object.values(list).map((item) => (
+          <li key={item.id}>
+            id: {item.id} value: {item.value}
+          </li>
+        ))}
+      </ul>
     </>
   );
 }

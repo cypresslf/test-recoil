@@ -8,3 +8,8 @@
 .selected {
   background-color: #c8edff;
 }
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}

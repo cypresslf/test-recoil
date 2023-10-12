@@ -40,7 +40,7 @@ function SlowList() {
 
   return (
     <>
-      <p>List items</p>
+      <p>Slow list with one fast-changing item</p>
       <ul>
         {Object.values(list).map((item) => (
           <li key={item.id}>

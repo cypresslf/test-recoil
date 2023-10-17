@@ -5,11 +5,25 @@ import Redux from "./Redux";
 import { RecoilRoot } from "recoil";
 import { Provider } from "react-redux";
 import { store } from "./redux";
+import Custom from "./Custom";
 
-type Page = "recoil" | "redux";
+type Page = "recoil" | "redux" | "custom";
+const pageUI = {
+  recoil: (
+    <RecoilRoot>
+      <Recoil />
+    </RecoilRoot>
+  ),
+  redux: (
+    <Provider store={store}>
+      <Redux />
+    </Provider>
+  ),
+  custom: <Custom />,
+};
 
 export default function App() {
-  const [page, setPage] = useState<Page>("recoil");
+  const [page, setPage] = useState<Page>("custom");
 
   return (
     <>
@@ -26,16 +40,14 @@ export default function App() {
         >
           Redux
         </button>
+        <button
+          onClick={() => setPage("custom")}
+          className={page === "custom" ? "selected" : ""}
+        >
+          Custom
+        </button>
       </div>
-      {page === "recoil" ? (
-        <RecoilRoot>
-          <Recoil />
-        </RecoilRoot>
-      ) : (
-        <Provider store={store}>
-          <Redux />
-        </Provider>
-      )}
+      {pageUI[page]}
     </>
   );
 }

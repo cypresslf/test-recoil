@@ -1,36 +1,23 @@
 import { useState } from "react";
-import { useSubscribe, useWebSocket } from "./state/lib";
+import { useStateContext, useSubscribe, useWebSocket } from "./state/lib";
 import type { Scan, Position } from "./state/types";
+import { HostInput } from "./HostInput";
 
 export default function Custom() {
-  const initialHost = new URLSearchParams(window.location.search).get("host");
-  const [host, setHost] = useState<string | null>(initialHost);
-  const [input, setInput] = useState<string | null>(initialHost);
-  useWebSocket(host ? `ws://${host}:3732` : undefined);
+  const { applyPatch } = useStateContext();
+  const [host, setHost] = useState<string | null>(
+    new URLSearchParams(window.location.search).get("host")
+  );
+  useWebSocket(host ? `ws://${host}:3732` : undefined, (data) => {
+    if (data.topic === "state") {
+      applyPatch(data.stateDelta);
+    }
+  });
 
   return (
     <div id="custom">
       <div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setHost(input);
-            const url = new URL(window.location.href);
-            if (input === null) url.searchParams.delete("host");
-            else url.searchParams.set("host", input);
-            history.pushState({}, "", url);
-          }}
-        >
-          <input
-            type="text"
-            placeholder="scanner hostname"
-            value={input ?? ""}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <button type="submit" disabled={host === input}>
-            Connect
-          </button>
-        </form>
+        <HostInput onChange={setHost} value={host} />
         <Temperature />
         <XRaysOn />
         <Position />

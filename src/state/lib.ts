@@ -10,23 +10,19 @@ export function useStateContext() {
   return context;
 }
 
-export function useWebSocket(url: string | undefined) {
-  const { applyPatch } = useStateContext();
-
+export function useWebSocket(
+  url: string | undefined,
+  onData: (data: any) => void
+) {
   useEffect(() => {
     if (!url) return;
     const socket = new WebSocket(url);
     socket.onopen = console.log;
     socket.onclose = console.log;
     socket.onerror = console.error;
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.topic === "state") {
-        applyPatch(data.stateDelta);
-      }
-    };
+    socket.onmessage = (event) => onData(JSON.parse(event.data));
     return () => socket.close();
-  }, [applyPatch, url]);
+  }, [onData, url]);
 }
 
 export function useSubscribe<T>(path: string): T | undefined {

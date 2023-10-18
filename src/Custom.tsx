@@ -1,5 +1,5 @@
 import { useSubscribe, useWebSocket } from "./state/lib";
-import { Scan, State } from "./state/types";
+import type { Scan, Position } from "./state/types";
 
 export default function Custom() {
   useWebSocket();
@@ -28,12 +28,12 @@ function XRaysOn() {
 }
 
 function Position() {
-  const value = useSubscribe<State["motion"]>("/motion");
+  const value = useSubscribe<Position>("/motion/position");
+  if (!value) return null;
   return (
-    <div>
-      <p>position: {value?.position}</p>
-      <p>turntable angle: {value?.turntableAngle}</p>
-    </div>
+    <p>
+      position: [{value[0]}, {value[1]}, {value[2]}]
+    </p>
   );
 }
 

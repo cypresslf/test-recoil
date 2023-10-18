@@ -10,9 +10,11 @@ export type State = {
   };
   motion?: {
     turntableAngle: number;
-    position: [number, number, number];
+    position: Position;
   };
 };
+
+export type Position = [number, number, number];
 
 export type Scan = {
   metadata: {

@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { StateContext } from "./state-context";
+import { StateContext } from "./context";
+import { Subscriber } from "./types";
 
 export function useStateContext() {
   const context = useContext(StateContext);
@@ -45,4 +46,40 @@ export function useSubscribe<T>(path: string): T | undefined {
     }
   }
   return value as T;
+}
+
+/**
+ * Returns all subscribers for a given path.
+ *
+ * Subscribers for a path are all subscribers for the path, it's parents, and its children
+ *
+ * If the path is "/a/b" then the following paths will match:
+ * - ""
+ * - "/a"
+ * - "/a/b"
+ * - "/a/b/c"
+ *
+ * but the following paths will not match:
+ * - "/a/b/x"
+ * - "/x"
+ *
+ * "" is equivalent to the root path
+ *
+ * @param path the path for the state change
+ * @param subscribersByPath a map of subscribers by the path they're subscribed to
+ */
+export function getSubscribers(
+  path: string,
+  subscribersByPath: Map<string, Set<Subscriber>>
+): Set<Subscriber> {
+  const result = new Set<Subscriber>();
+  for (const [key, subscribers] of subscribersByPath) {
+    if (path.startsWith(key)) {
+      subscribers.forEach((subscriber) => result.add(subscriber));
+    }
+    if (key.startsWith(path)) {
+      subscribers.forEach((subscriber) => result.add(subscriber));
+    }
+  }
+  return result;
 }

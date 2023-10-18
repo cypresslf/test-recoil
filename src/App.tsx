@@ -6,7 +6,7 @@ import { RecoilRoot } from "recoil";
 import { Provider } from "react-redux";
 import { store } from "./redux";
 import Custom from "./Custom";
-import { StateProvider } from "./state-context";
+import { StateProvider } from "./state/context";
 
 type Page = "recoil" | "redux" | "custom";
 const pageUI = {

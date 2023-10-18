@@ -1,5 +1,5 @@
-import { useSubscribe, useWebSocket } from "./state-hooks";
-import { Scan } from "./state-types";
+import { useSubscribe, useWebSocket } from "./state/lib";
+import { Scan, State } from "./state/types";
 
 export default function Custom() {
   useWebSocket();
@@ -9,6 +9,7 @@ export default function Custom() {
       <div>
         <Temperature />
         <XRaysOn />
+        <Position />
         <Scans />
       </div>
       <FullState />
@@ -24,6 +25,16 @@ function Temperature() {
 function XRaysOn() {
   const value = useSubscribe<boolean>("/source/xrayOn");
   return <p>X-rays {value ? "on" : "off"}</p>;
+}
+
+function Position() {
+  const value = useSubscribe<State["motion"]>("/motion");
+  return (
+    <div>
+      <p>position: {value?.position}</p>
+      <p>turntable angle: {value?.turntableAngle}</p>
+    </div>
+  );
 }
 
 function Scans() {
@@ -44,6 +55,6 @@ function Scans() {
 }
 
 function FullState() {
-  const value = useSubscribe("/");
+  const value = useSubscribe("");
   return <pre>{JSON.stringify(value, null, 2)}</pre>;
 }

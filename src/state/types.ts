@@ -8,6 +8,10 @@ export type State = {
   scans?: {
     local: Record<string, Scan>;
   };
+  motion?: {
+    turntableAngle: number;
+    position: [number, number, number];
+  };
 };
 
 export type Scan = {
@@ -16,3 +20,5 @@ export type Scan = {
     progress?: number;
   };
 };
+
+export type Subscriber = () => void;

@@ -1,9 +1,8 @@
 import { Operation } from "fast-json-patch";
 import { MutableRefObject, createContext, useCallback, useRef } from "react";
-import { State } from "./state-types";
+import { State, Subscriber } from "./types";
 import { applyPatch as apply } from "fast-json-patch";
-
-type Subscriber = () => void;
+import { getSubscribers } from "./lib";
 
 export const StateContext = createContext<{
   stateRef: MutableRefObject<State>;
@@ -76,35 +75,4 @@ export function StateProvider({ children }: { children: React.ReactNode }) {
       {children}
     </StateContext.Provider>
   );
-}
-
-/**
- * If a path is a subset of another path, then the subscribers for the parent path should be notified
- *
- * @example
- *
- * const subscribersByPath = new Map([
- *  ["/", new Set([callback1])],
- *  ["/a", new Set([callback2])],
- *  ["/a/b/c", new Set([callback3])],
- *  ["/a/b/x", new Set([callback4])],
- *  ["/x", new Set([callback5])],
- * ]);
- *
- * getSubscribers("/a/b/c", subscribersByPath) // [callback1, callback2, callback3]
- *
- * @param path the path for the state change
- * @param subscribersByPath a map of subscribers by the path they're subscribed to
- */
-function getSubscribers(
-  path: string,
-  subscribersByPath: Map<string, Set<Subscriber>>
-): Set<Subscriber> {
-  const result = new Set<Subscriber>();
-  for (const [key, subscribers] of subscribersByPath) {
-    if (path.startsWith(key)) {
-      subscribers.forEach((subscriber) => result.add(subscriber));
-    }
-  }
-  return result;
 }

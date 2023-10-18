@@ -20,3 +20,8 @@ button {
 button:hover {
   border-color: #646cff;
 }
+
+#custom {
+  display: flex;
+  justify-content: space-between;
+}

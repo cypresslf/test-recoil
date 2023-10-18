@@ -5,12 +5,14 @@ export default function Custom() {
   useWebSocket();
 
   return (
-    <>
-      <Temperature />
-      <XRaysOn />
-      <Scans />
-      <SlowRender />
-    </>
+    <div id="custom">
+      <div>
+        <Temperature />
+        <XRaysOn />
+        <Scans />
+      </div>
+      <FullState />
+    </div>
   );
 }
 
@@ -41,10 +43,7 @@ function Scans() {
   );
 }
 
-function SlowRender() {
-  const start = Date.now();
-  while (Date.now() - start < 1000) {
-    /* wait for 1s */
-  }
-  return <p>This takes 1s to render</p>;
+function FullState() {
+  const value = useSubscribe("/");
+  return <pre>{JSON.stringify(value, null, 2)}</pre>;
 }

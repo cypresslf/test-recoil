@@ -1,4 +1,4 @@
-# Recoil, Redux, vs Custom Solution
+# Recoil vs Redux vs Custom Solution
 
 I compare redux, recoil, and a custom solution for selective rendering of components within a list. Redux needs to re-compare all elements in the list in order to determine which ones to rerender, whereas Recoil does not. The custom solution is able to selectively rerender components that subscribe to certain json diffs automatically, whereas the others need some form of connecting logic.
 

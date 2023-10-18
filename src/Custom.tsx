@@ -10,6 +10,8 @@ export default function Custom() {
         <Temperature />
         <XRaysOn />
         <Position />
+        <Voltage />
+        <Current />
         <Scans />
       </div>
       <FullState />
@@ -24,6 +26,7 @@ function Temperature() {
 
 function XRaysOn() {
   const value = useSubscribe<boolean>("/source/xrayOn");
+  if (value === undefined) return null;
   return <p>X-rays {value ? "on" : "off"}</p>;
 }
 
@@ -35,6 +38,18 @@ function Position() {
       position: [{value[0]}, {value[1]}, {value[2]}]
     </p>
   );
+}
+
+function Voltage() {
+  const value = useSubscribe<number | undefined>("/source/kvMeasured");
+  if (value === undefined) return null;
+  return <p>kv: {value}</p>;
+}
+
+function Current() {
+  const value = useSubscribe<number | undefined>("/source/uaMeasured");
+  if (value === undefined) return null;
+  return <p>ua: {value}</p>;
 }
 
 function Scans() {

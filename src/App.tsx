@@ -5,7 +5,7 @@ import Redux from "./Redux";
 import { RecoilRoot } from "recoil";
 import { Provider } from "react-redux";
 import { store } from "./redux";
-import Custom from "./Custom";
+import Custom, { StateProvider } from "./Custom";
 
 type Page = "recoil" | "redux" | "custom";
 const pageUI = {
@@ -19,7 +19,11 @@ const pageUI = {
       <Redux />
     </Provider>
   ),
-  custom: <Custom />,
+  custom: (
+    <StateProvider>
+      <Custom />
+    </StateProvider>
+  ),
 };
 
 export default function App() {

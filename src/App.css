@@ -6,19 +6,31 @@ body {
   font-family: sans-serif;
 }
 
-button {
+button,
+input {
+  margin-right: 10px;
+  margin-bottom: 10px;
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 1px solid #2223;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  margin: 1em;
   font-weight: 500;
   font-family: inherit;
-  cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+button {
+  cursor: pointer;
+}
+button:hover,
+input:hover {
   border-color: #646cff;
+}
+button:disabled {
+  color: #2223;
+}
+button:disabled:hover {
+  cursor: default;
+  border: 1px solid #2223;
 }
 
 #custom {

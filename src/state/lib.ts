@@ -10,11 +10,12 @@ export function useStateContext() {
   return context;
 }
 
-export function useWebSocket() {
+export function useWebSocket(url: string | undefined) {
   const { applyPatch } = useStateContext();
 
   useEffect(() => {
-    const socket = new WebSocket("ws://salem-oats:3732");
+    if (!url) return;
+    const socket = new WebSocket(url);
     socket.onopen = console.log;
     socket.onclose = console.log;
     socket.onerror = console.error;
@@ -25,7 +26,7 @@ export function useWebSocket() {
       }
     };
     return () => socket.close();
-  }, [applyPatch]);
+  }, [applyPatch, url]);
 }
 
 export function useSubscribe<T>(path: string): T | undefined {

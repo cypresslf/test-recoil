@@ -1,6 +1,6 @@
-# Recoil and Redux comparison
+# Recoil, Redux, vs Custom Solution
 
-I compare redux and recoil for selective rendering of components within a list. Redux needs to re-compare all elements in the list in order to determine which ones to rerender, whereas Recoil does not.
+I compare redux, recoil, and a custom solution for selective rendering of components within a list. Redux needs to re-compare all elements in the list in order to determine which ones to rerender, whereas Recoil does not. The custom solution is able to selectively rerender components that subscribe to certain json diffs automatically, whereas the others need some form of connecting logic.
 
 ## To run
 
@@ -9,14 +9,14 @@ I compare redux and recoil for selective rendering of components within a list. 
 ### Development mode
 
 ```sh
-bun dev
+bun run dev
 ```
 
 ### Production mode
 
 ```sh
 bun run build
-bun preview
+bun run preview
 ```
 
 [1]: https://bun.sh/docs/installation

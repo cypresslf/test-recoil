@@ -2,15 +2,15 @@
   --bg-color: #fff;
   --text-color: #333;
   --border-color: #2223;
-  --active-border-color: #646cff;
+  --active-border-color: #6e97ff;
 }
-:button {
+button {
   --disabled-color: #2223;
   --selected-bg-color: #c8edff;
   --selected-text-color: #000;
 }
-:button,
-:input {
+button,
+input {
   --bg-color: #eee;
 }
 .selected {
@@ -49,6 +49,7 @@ input:hover {
 button:disabled {
   cursor: default;
   color: var(--disabled-color);
+  background-color: var(--disabled-bg-color);
   border: 1px solid var(--border-color);
 }
 
@@ -67,15 +68,16 @@ pre {
     --text-color: rgb(233, 240, 243);
     --border-color: #fff4;
     --selected-bg-color: #0c0f41;
-    --active-border-color: #646cff;
+    --active-border-color: #294aa5;
   }
-  :button {
-    --disabled-color: #0003;
+  button {
+    --disabled-color: #fff4;
     --selected-bg-color: #042738;
     --selected-text-color: #d3e2f7;
+    --disabled-bg-color: #17181844;
   }
-  :button,
-  :input {
-    --bg-color: #0f0e0e;
+  button,
+  input {
+    --bg-color: #171818;
   }
 }

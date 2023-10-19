@@ -1,4 +1,11 @@
-import { MutableRefObject, createContext, useCallback, useRef } from "react";
+import {
+  MutableRefObject,
+  createContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { State, Subscriber } from "./types";
 import { Operation, applyJsonPatch, getSubscribers } from "./lib";
 
@@ -47,5 +54,30 @@ export function StateProvider({ children }: { children: React.ReactNode }) {
     >
       {children}
     </StateContext.Provider>
+  );
+}
+
+export const WebsocketContext = createContext<{
+  websocket: WebSocket | null;
+  setHost: (host: string | null) => void;
+} | null>(null);
+
+export function WebsocketProvider({ children }: { children: React.ReactNode }) {
+  const [host, setHost] = useState<string | null>(null);
+  const [websocket, setWebsocket] = useState<WebSocket | null>(null);
+
+  useEffect(() => {
+    if (!host) {
+      return;
+    }
+    const socket = new WebSocket(`ws://${host}:3732`);
+    setWebsocket(socket);
+    return () => socket.close();
+  }, [host]);
+
+  return (
+    <WebsocketContext.Provider value={{ websocket, setHost }}>
+      {children}
+    </WebsocketContext.Provider>
   );
 }

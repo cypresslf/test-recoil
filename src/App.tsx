@@ -6,24 +6,30 @@ import { RecoilRoot } from "recoil";
 import { Provider } from "react-redux";
 import { store } from "./redux";
 import Custom from "./Custom";
-import { StateProvider } from "./state/context";
+import { StateProvider, WebsocketProvider } from "./state/context";
 
 type Page = "recoil" | "redux" | "custom";
 const pageUI = {
   recoil: (
-    <RecoilRoot>
-      <Recoil />
-    </RecoilRoot>
+    <WebsocketProvider key="recoil">
+      <RecoilRoot>
+        <Recoil />
+      </RecoilRoot>
+    </WebsocketProvider>
   ),
   redux: (
-    <Provider store={store}>
-      <Redux />
-    </Provider>
+    <WebsocketProvider key="redux">
+      <Provider store={store}>
+        <Redux />
+      </Provider>
+    </WebsocketProvider>
   ),
   custom: (
-    <StateProvider>
-      <Custom />
-    </StateProvider>
+    <WebsocketProvider key="custom">
+      <StateProvider>
+        <Custom />
+      </StateProvider>
+    </WebsocketProvider>
   ),
 };
 

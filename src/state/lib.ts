@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { StateContext } from "./context";
+import { StateContext, WebsocketContext } from "./context";
 import { Subscriber } from "./types";
 
 export function useStateContext() {
@@ -10,22 +10,30 @@ export function useStateContext() {
   return context;
 }
 
+function useWebsocketContext() {
+  const context = useContext(WebsocketContext);
+  if (!context) {
+    throw new Error("You must use this hook inside a `WebSocketProvider`");
+  }
+  return context;
+}
+
 export function useWebSocket(
   host: string | null,
   onPatch: (patch: Operation[]) => void
 ) {
+  const { websocket, setHost } = useWebsocketContext();
+  useEffect(() => setHost(host), [host, setHost]);
   useEffect(() => {
-    if (!host) return;
-    const socket = new WebSocket(`ws://${host}:3732`);
-    socket.onopen = console.log;
-    socket.onclose = console.log;
-    socket.onerror = console.error;
-    socket.onmessage = (event) => {
+    if (!websocket) return;
+    websocket.onopen = console.log;
+    websocket.onclose = console.log;
+    websocket.onerror = console.error;
+    websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.topic === "state") onPatch(data.stateDelta);
     };
-    return () => socket.close();
-  }, [onPatch, host]);
+  }, [websocket, onPatch]);
 }
 
 export function useSubscribe<T>(path: string): T | undefined {

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
-import { useWebSocket } from "./state/lib";
+import { applyJsonPatch, useWebSocket } from "./state/lib";
 import { State } from "./state/types";
-import { applyPatch } from "fast-json-patch";
 import { HostInput } from "./HostInput";
 
 const scannerState = atom<State | undefined>({
@@ -46,10 +45,7 @@ function Recoil() {
   );
   const setScanner = useSetRecoilState(scannerState);
   useWebSocket(host, (patch) => {
-    setScanner(
-      (scanner) =>
-        applyPatch(scanner ?? {}, patch, undefined, false).newDocument
-    );
+    setScanner((scanner) => applyJsonPatch(scanner ?? {}, patch));
   });
 
   return (

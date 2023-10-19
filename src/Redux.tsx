@@ -1,9 +1,8 @@
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "./redux";
 import { useCallback, useState } from "react";
-import { useWebSocket } from "./state/lib";
+import { Operation, useWebSocket } from "./state/lib";
 import { HostInput } from "./HostInput";
-import { Operation } from "fast-json-patch";
 
 function Redux() {
   const [host, setHost] = useState<string | null>(

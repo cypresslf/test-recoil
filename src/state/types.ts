@@ -4,6 +4,8 @@ export type State = {
   };
   source?: {
     xrayOn: boolean;
+    kvMeasured: number;
+    uaMeasured: number;
   };
   scans?: {
     local: Record<string, Scan>;

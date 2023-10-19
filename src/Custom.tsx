@@ -15,7 +15,7 @@ export default function Custom() {
   });
 
   return (
-    <div id="custom">
+    <div id="columns">
       <div>
         <HostInput onChange={setHost} value={host} />
         <Temperature />

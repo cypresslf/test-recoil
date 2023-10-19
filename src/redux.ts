@@ -1,52 +1,19 @@
-import { PayloadAction, configureStore, createSlice } from "@reduxjs/toolkit";
-import { LIST_IDS } from "./constants";
+import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { State } from "./state/types";
 export const NEVER_CHANGES = { value: "never changes" };
 
-export type State = {
-  list: Record<string, { value: number }>;
-  listIds: string[];
-  mousePosition: { x: number; y: number };
-  neverChanges: { value: string };
-};
-
-const initialState: State = {
-  listIds: LIST_IDS,
-  list: LIST_IDS.map((id) => ({ [id]: { value: Math.random() } })).reduce(
-    (a, b) => ({ ...a, ...b }),
-    {}
-  ),
-  mousePosition: { x: 0, y: 0 },
-  neverChanges: NEVER_CHANGES,
-};
+const initialState: State | null = null;
 
 const slice = createSlice({
   name: "state",
   initialState,
   reducers: {
-    setMousePosition: (state, action) => {
-      state.mousePosition = action.payload;
-    },
-    setNeverChanges: (state, action) => {
-      state.neverChanges = action.payload;
-    },
-    setListValue: (
-      state,
-      action: PayloadAction<{ id: string; value: number }>
-    ) => {
-      const item = state.list[action.payload.id];
-      if (item) item.value = action.payload.value;
-    },
-    addListValue: (
-      state,
-      action: PayloadAction<{ id: string; value: number }>
-    ) => {
-      const item = state.list[action.payload.id];
-      if (item) item.value += action.payload.value;
+    setState: (state, action) => {
+      state = action.payload;
     },
   },
 });
 
-export const { setMousePosition, setNeverChanges, setListValue, addListValue } =
-  slice.actions;
+export const { setState } = slice.actions;
 export const store = configureStore({ reducer: slice.reducer });
 export type AppDispatch = typeof store.dispatch;

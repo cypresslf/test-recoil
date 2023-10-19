@@ -1,9 +1,27 @@
+:root {
+  --bg-color: #fff;
+  --text-color: #333;
+  --border-color: #2223;
+  --active-border-color: #646cff;
+}
+:button {
+  --disabled-color: #2223;
+  --selected-bg-color: #c8edff;
+  --selected-text-color: #000;
+}
+:button,
+:input {
+  --bg-color: #eee;
+}
 .selected {
-  background-color: #c8edff;
+  background-color: var(--selected-bg-color);
+  color: var(--selected-text-color);
 }
 
 body {
   font-family: sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 button,
@@ -11,33 +29,53 @@ input {
   margin-right: 10px;
   margin-bottom: 10px;
   border-radius: 8px;
-  border: 1px solid #2223;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
   transition: border-color 0.25s;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 button {
   cursor: pointer;
+  background-color: var(--bg-color);
 }
 button:hover,
 input:hover {
-  border-color: #646cff;
+  border-color: var(--active-border-color);
 }
 button:disabled {
-  color: #2223;
-}
-button:disabled:hover {
   cursor: default;
-  border: 1px solid #2223;
+  color: var(--disabled-color);
+  border: 1px solid var(--border-color);
 }
 
-#custom {
+#columns {
   display: flex;
   justify-content: space-between;
 }
 
 pre {
   width: 300px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #222;
+    --text-color: rgb(233, 240, 243);
+    --border-color: #fff4;
+    --selected-bg-color: #0c0f41;
+    --active-border-color: #646cff;
+  }
+  :button {
+    --disabled-color: #0003;
+    --selected-bg-color: #042738;
+    --selected-text-color: #d3e2f7;
+  }
+  :button,
+  :input {
+    --bg-color: #0f0e0e;
+  }
 }

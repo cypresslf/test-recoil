@@ -1,109 +1,134 @@
-import { useEffect } from "react";
-import { atom, atomFamily, useRecoilValue, useSetRecoilState } from "recoil";
-import { LIST_IDS } from "./constants";
+import { useState } from "react";
+import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
+import { useWebSocket } from "./state/lib";
+import { State } from "./state/types";
+import { applyPatch } from "fast-json-patch";
+import { HostInput } from "./HostInput";
 
-const NEVER_CHANGES = { value: "never changes" };
-
-const mousePositionState = atom({
-  key: "mousePositionState",
-  default: { x: 0, y: 0 },
+const scannerState = atom<State | undefined>({
+  key: "scannerState",
+  default: undefined,
 });
 
-const neverChangesState = atom({
-  key: "neverChanges",
-  default: NEVER_CHANGES,
+const temperatureState = selector({
+  key: "temperatureState",
+  get: ({ get }) => get(scannerState)?.detector?.temperature,
 });
 
-const listState = atom({
-  key: "listIds",
-  default: LIST_IDS,
+const xRaysOnState = selector({
+  key: "xRaysOnState",
+  get: ({ get }) => get(scannerState)?.source?.xrayOn,
 });
 
-const listStateFamily = atomFamily({
-  key: "list",
-  default: () => ({ value: Math.random() }),
+const positionState = selector({
+  key: "positionState",
+  get: ({ get }) => get(scannerState)?.motion?.position,
+});
+
+const voltageState = selector({
+  key: "voltageState",
+  get: ({ get }) => get(scannerState)?.source?.kvMeasured,
+});
+
+const currentState = selector({
+  key: "currentState",
+  get: ({ get }) => get(scannerState)?.source?.uaMeasured,
+});
+
+const scansState = selector({
+  key: "scansState",
+  get: ({ get }) => get(scannerState)?.scans?.local,
 });
 
 function Recoil() {
-  const setMousePosition = useSetRecoilState(mousePositionState);
-  const setNeverChanges = useSetRecoilState(neverChangesState);
-  const setListItem = useSetRecoilState(listStateFamily("1"));
+  const [host, setHost] = useState<string | null>(
+    new URLSearchParams(window.location.search).get("host")
+  );
+  const setScanner = useSetRecoilState(scannerState);
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-      setListItem({ value: e.clientX + e.clientY });
-      setNeverChanges(NEVER_CHANGES);
-    };
-    window.addEventListener("mousemove", handler);
-    return () => window.removeEventListener("mousemove", handler);
-  }, [setMousePosition, setNeverChanges, setListItem]);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setListItem((item) => ({ value: item.value + Math.random() - 0.5 }));
-    }, 30);
-    return () => clearInterval(id);
-  }, [setListItem]);
+  useWebSocket(host ? `ws://${host}:3732` : undefined, (data) => {
+    if (data.topic === "state") {
+      setScanner(
+        (scanner) =>
+          applyPatch(scanner ?? {}, data.stateDelta, undefined, false)
+            .newDocument
+      );
+    }
+  });
 
   return (
-    <>
-      <SlowList />
-      <FastChild />
-      <SlowChild />
-    </>
+    <div id="columns">
+      <div>
+        <HostInput value={host} onChange={setHost} />
+        <Temperature />
+        <XRaysOn />
+        <Position />
+        <Voltage />
+        <Current />
+        <Scans />
+      </div>
+      <div>
+        <FullState />
+      </div>
+    </div>
   );
 }
 
-function SlowList() {
-  const listIds = useRecoilValue(listState);
-
-  const start = Date.now();
-  while (Date.now() - start < 1000) {
-    // artificial delay: simulate a slow render
-  }
-
-  return (
-    <>
-      <p>Slow list with one fast-changing item</p>
-      <ul>
-        {listIds.map((id) => (
-          <FastListItem id={id} key={id} />
-        ))}
-      </ul>
-    </>
-  );
+function Temperature() {
+  const value = useRecoilValue(temperatureState);
+  if (value === undefined) return null;
+  return <p>Temperature: {value}</p>;
 }
 
-function FastListItem({ id }: { id: string }) {
-  const item = useRecoilValue(listStateFamily(id));
-
-  return item ? (
-    <li key={item.value}>
-      id: {id}, value: {item.value.toFixed(5)}
-    </li>
-  ) : undefined;
+function XRaysOn() {
+  const value = useRecoilValue(xRaysOnState);
+  if (value === undefined) return null;
+  return <p>X-rays {value ? "on" : "off"}</p>;
 }
 
-function FastChild() {
-  const mousePosition = useRecoilValue(mousePositionState);
-
+function Position() {
+  const value = useRecoilValue(positionState);
+  if (value === undefined) return null;
   return (
     <p>
-      Mouse position: ({mousePosition.x}, {mousePosition.y})
+      position: [{value[0]}, {value[1]}, {value[2]}]
     </p>
   );
 }
 
-function SlowChild() {
-  const neverChanges = useRecoilValue(neverChangesState);
+function Voltage() {
+  const value = useRecoilValue(voltageState);
+  if (value === undefined) return null;
+  return <p>kv: {value}</p>;
+}
 
-  const start = Date.now();
-  while (Date.now() - start < 1000) {
-    // artificial delay: simulate a slow render
-  }
+function Current() {
+  const value = useRecoilValue(currentState);
+  if (value === undefined) return null;
+  return <p>ua: {value}</p>;
+}
 
-  return <div>Slow Child {neverChanges.value}</div>;
+function Scans() {
+  const value = useRecoilValue(scansState);
+  if (value === undefined) return null;
+  return (
+    <div>
+      <h1>Scans</h1>
+      <ul>
+        {Object.entries(value).map(([id, scan]) => (
+          <li key={id}>
+            progress: {scan.metadata.progress} {scan.metadata.name}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function FullState() {
+  const scanner = useRecoilValue(scannerState);
+  if (!scanner) return null;
+  return <pre>{JSON.stringify(scanner, null, 2)}</pre>;
 }
 
 export default Recoil;

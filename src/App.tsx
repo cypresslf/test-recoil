@@ -28,25 +28,35 @@ const pageUI = {
 };
 
 export default function App() {
-  const [page, setPage] = useState<Page>("custom");
+  const path = window.location.pathname.substring(1);
+  const initialPage: Page = Object.keys(pageUI).includes(path)
+    ? (path as Page)
+    : "recoil";
+  const [page, setPage] = useState<Page>(initialPage);
+  const handleClick = (page: Page) => () => {
+    setPage(page);
+    const url = new URL(window.location.href);
+    url.pathname = page;
+    history.pushState({}, "", url);
+  };
 
   return (
     <>
       <div>
         <button
-          onClick={() => setPage("recoil")}
+          onClick={handleClick("recoil")}
           className={page === "recoil" ? "selected" : ""}
         >
           Recoil
         </button>
         <button
-          onClick={() => setPage("redux")}
+          onClick={handleClick("redux")}
           className={page === "redux" ? "selected" : ""}
         >
           Redux
         </button>
         <button
-          onClick={() => setPage("custom")}
+          onClick={handleClick("custom")}
           className={page === "custom" ? "selected" : ""}
         >
           Custom

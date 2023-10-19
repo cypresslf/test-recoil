@@ -45,15 +45,11 @@ function Recoil() {
     new URLSearchParams(window.location.search).get("host")
   );
   const setScanner = useSetRecoilState(scannerState);
-
-  useWebSocket(host ? `ws://${host}:3732` : undefined, (data) => {
-    if (data.topic === "state") {
-      setScanner(
-        (scanner) =>
-          applyPatch(scanner ?? {}, data.stateDelta, undefined, false)
-            .newDocument
-      );
-    }
+  useWebSocket(host, (patch) => {
+    setScanner(
+      (scanner) =>
+        applyPatch(scanner ?? {}, patch, undefined, false).newDocument
+    );
   });
 
   return (

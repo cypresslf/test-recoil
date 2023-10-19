@@ -8,11 +8,7 @@ export default function Custom() {
   const [host, setHost] = useState<string | null>(
     new URLSearchParams(window.location.search).get("host")
   );
-  useWebSocket(host ? `ws://${host}:3732` : undefined, (data) => {
-    if (data.topic === "state") {
-      applyPatch(data.stateDelta);
-    }
-  });
+  useWebSocket(host, applyPatch);
 
   return (
     <div id="columns">

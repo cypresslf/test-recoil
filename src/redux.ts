@@ -1,19 +1,15 @@
-import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import { State } from "./state/types";
-export const NEVER_CHANGES = { value: "never changes" };
+import { applyPatch } from "fast-json-patch";
+import { TypedUseSelectorHook, useSelector } from "react-redux";
 
-const initialState: State | null = null;
-
-const slice = createSlice({
-  name: "state",
-  initialState,
-  reducers: {
-    setState: (state, action) => {
-      state = action.payload;
-    },
+export const store = configureStore({
+  reducer: (state: State | null = null, action) => {
+    if (action.type === "patch") {
+      return applyPatch(state, action.payload, undefined, false).newDocument;
+    }
+    return state;
   },
 });
-
-export const { setState } = slice.actions;
-export const store = configureStore({ reducer: slice.reducer });
 export type AppDispatch = typeof store.dispatch;
+export const useAppSelector: TypedUseSelectorHook<State> = useSelector;

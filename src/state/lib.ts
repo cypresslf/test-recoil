@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { StateContext } from "./context";
 import { Subscriber } from "./types";
+import { Operation } from "fast-json-patch";
 
 export function useStateContext() {
   const context = useContext(StateContext);
@@ -11,18 +12,21 @@ export function useStateContext() {
 }
 
 export function useWebSocket(
-  url: string | undefined,
-  onData: (data: any) => void
+  host: string | null,
+  onPatch: (patch: Operation[]) => void
 ) {
   useEffect(() => {
-    if (!url) return;
-    const socket = new WebSocket(url);
+    if (!host) return;
+    const socket = new WebSocket(`ws://${host}:3732`);
     socket.onopen = console.log;
     socket.onclose = console.log;
     socket.onerror = console.error;
-    socket.onmessage = (event) => onData(JSON.parse(event.data));
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.topic === "state") onPatch(data.stateDelta);
+    };
     return () => socket.close();
-  }, [onData, url]);
+  }, [onPatch, host]);
 }
 
 export function useSubscribe<T>(path: string): T | undefined {

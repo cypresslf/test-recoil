@@ -60,9 +60,11 @@ export function StateProvider({ children }: { children: React.ReactNode }) {
 export const WebsocketContext = createContext<{
   websocket: WebSocket | null;
   setHost: (host: string | null) => void;
+  seqNumRef: MutableRefObject<number>;
 } | null>(null);
 
 export function WebsocketProvider({ children }: { children: React.ReactNode }) {
+  const seqNumRef = useRef(0);
   const [host, setHost] = useState<string | null>(null);
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
 
@@ -76,7 +78,7 @@ export function WebsocketProvider({ children }: { children: React.ReactNode }) {
   }, [host]);
 
   return (
-    <WebsocketContext.Provider value={{ websocket, setHost }}>
+    <WebsocketContext.Provider value={{ websocket, setHost, seqNumRef }}>
       {children}
     </WebsocketContext.Provider>
   );

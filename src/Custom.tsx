@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { useStateContext, useSubscribe, useWebSocket } from "./state/lib";
+import {
+  useStateContext,
+  useSubscribe,
+  useWebSocket,
+  useClient,
+} from "./state/lib";
 import type { Scan, Position } from "./state/types";
 import { HostInput } from "./HostInput";
 
@@ -33,8 +38,18 @@ function Temperature() {
 
 function XRaysOn() {
   const value = useSubscribe<boolean>("/source/xrayOn");
-  if (value === undefined) return null;
-  return <p>X-rays {value ? "on" : "off"}</p>;
+  const send = useClient();
+  if (value === undefined || send === null) return null;
+  return (
+    <label>
+      X-rays on{" "}
+      <input
+        type="checkbox"
+        checked={value}
+        onChange={() => send("setXrays", { on: !value, userInitiated: true })}
+      />
+    </label>
+  );
 }
 
 function Position() {

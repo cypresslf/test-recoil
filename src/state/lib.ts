@@ -34,6 +34,30 @@ export function useWebSocket(
       if (data.topic === "state") onPatch(data.stateDelta);
     };
   }, [websocket, onPatch]);
+
+  useEffect(() => {
+    if (!websocket) return;
+    const id = setInterval(() => {
+      if (websocket.readyState === WebSocket.OPEN) {
+        websocket.send(JSON.stringify({ topic: "heartbeat" }));
+      }
+    }, 500);
+    return () => clearInterval(id);
+  }, [websocket]);
+}
+
+export function useClient() {
+  const { websocket, seqNumRef } = useWebsocketContext();
+  if (!websocket) return null;
+  return (request: string, args?: Record<string, unknown>) =>
+    websocket.send(
+      JSON.stringify({
+        topic: "request",
+        sequenceNumber: seqNumRef.current++,
+        request,
+        ...args,
+      })
+    );
 }
 
 export function useSubscribe<T>(path: string): T | undefined {

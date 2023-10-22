@@ -14,9 +14,22 @@ export type State = {
     turntableAngle: number;
     position: Position;
   };
+  settings: {
+    filter: {
+      filterSlots: Filter[];
+    };
+  };
 };
 
 export type Position = [number, number, number];
+
+export type Filter = {
+  filter: {
+    material: string;
+    thickness: number;
+  } | null;
+  position: number;
+};
 
 export type Scan = {
   metadata: {

@@ -5,38 +5,43 @@ import { State } from "./state/types";
 import { HostInput } from "./HostInput";
 
 const scannerState = atom<State | undefined>({
-  key: "scannerState",
+  key: "scanner",
   default: undefined,
 });
 
 const temperatureState = selector({
-  key: "temperatureState",
+  key: "temperature",
   get: ({ get }) => get(scannerState)?.detector?.temperature,
 });
 
 const xRaysOnState = selector({
-  key: "xRaysOnState",
+  key: "xRaysOn",
   get: ({ get }) => get(scannerState)?.source?.xrayOn,
 });
 
 const positionState = selector({
-  key: "positionState",
+  key: "position",
   get: ({ get }) => get(scannerState)?.motion?.position,
 });
 
 const voltageState = selector({
-  key: "voltageState",
+  key: "voltage",
   get: ({ get }) => get(scannerState)?.source?.kvMeasured,
 });
 
 const currentState = selector({
-  key: "currentState",
+  key: "current",
   get: ({ get }) => get(scannerState)?.source?.uaMeasured,
 });
 
 const scansState = selector({
-  key: "scansState",
+  key: "scans",
   get: ({ get }) => get(scannerState)?.scans?.local,
+});
+
+const filterSettingsState = selector({
+  key: "filterSettings",
+  get: ({ get }) => get(scannerState)?.settings.filter.filterSlots,
 });
 
 function Recoil() {
@@ -57,6 +62,7 @@ function Recoil() {
         <Position />
         <Voltage />
         <Current />
+        <FilterSettings />
         <Scans />
       </div>
       <div>
@@ -98,6 +104,27 @@ function Current() {
   const value = useRecoilValue(currentState);
   if (value === undefined) return null;
   return <p>ua: {value}</p>;
+}
+
+function FilterSettings() {
+  const value = useRecoilValue(filterSettingsState);
+  if (value === undefined) return null;
+  return (
+    <div>
+      <h1>Filters</h1>
+      <ul>
+        {value.map((slot) =>
+          slot.filter ? (
+            <li key={slot.position}>
+              {slot.filter.material} {slot.filter.thickness} mm
+            </li>
+          ) : (
+            <li key={slot.position}>no filter</li>
+          )
+        )}
+      </ul>
+    </div>
+  );
 }
 
 function Scans() {
